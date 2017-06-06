@@ -4,38 +4,33 @@ using UnityEngine;
 
 public class FPSController : MonoBehaviour {
 
-    public float speed = 2f;
-    CharacterController player;
-    public float sensitivity = 2f;
-    public GameObject eyes;
-    float moveFB;
-    float moveLR;
-    float rotX;
-    float rotY;
+    public float xRotation;
+    public float yRotation;
+    public float lookSensitivity = 2f;
+    public float currentXRotation;
+    public float currentYRotation;
+    public float xRotationV;
+    public float yRotationV;
+    public float lookSmoothDamp = 0.1f;
 
 	// Use this for initialization
-	public void Start () {
-
-        player = GetComponent<CharacterController>();
+	public void Start () {    
 
 	}
 	
 	// Update is called once per frame
 	public void Update () {
 
-        moveFB = Input.GetAxis("Vertical") * speed;
-        moveLR = Input.GetAxis("Horizontal") * speed;
+        xRotation -= Input.GetAxis("Mouse Y") * lookSensitivity;
+        yRotation += Input.GetAxis("Mouse X") * lookSensitivity;        
 
-        rotX = Input.GetAxis("Mouse X") * sensitivity;
-        rotY = Input.GetAxis("Mouse Y") * sensitivity;
+        xRotation = Mathf.Clamp(xRotation, -90, 90);
 
-        rotY = Mathf.Clamp(rotY, -60f, 60f);
+        currentXRotation = Mathf.SmoothDamp(currentXRotation, xRotation, ref xRotationV, lookSmoothDamp);
+        currentYRotation = Mathf.SmoothDamp(currentYRotation, yRotation, ref yRotationV, lookSmoothDamp);
 
-        Vector3 movement = new Vector3(moveLR,0,moveFB);
-        transform.Rotate(0, rotX, 0);
-        eyes.transform.Rotate(-rotY, 0, 0);
-        movement = transform.rotation * movement;
-        player.Move(movement * Time.deltaTime);
+
+        transform.rotation = Quaternion.Euler(currentXRotation,currentYRotation, 0);  
 
 	}
 
