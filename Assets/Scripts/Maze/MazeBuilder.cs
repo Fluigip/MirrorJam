@@ -10,6 +10,7 @@ public class MazeBuilder : MonoBehaviour
   {
     Maze maze = new Maze(radius);
     maze.SpawnHexes();
+    maze.BuildGraph();
     maze.Dbg();
 
     //RenderMazeGraph(graph);

@@ -8,12 +8,12 @@ public class Hex
 {
   public int   q;
   public int   r;
-  public Hex[] neighbours;
+  public Hex[] neighs;
 
   public Hex(int q, int r) {
     this.q = q;
     this.r = r;
-    neighbours = new Hex[6];
+    neighs = new Hex[6];
   }
 
 }
