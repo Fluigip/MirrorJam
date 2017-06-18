@@ -1,5 +1,5 @@
 using UnityEngine;
-// using System;
+using System;
 
 namespace MirrorJam
 {
@@ -7,34 +7,42 @@ namespace MirrorJam
 public class Maze
 {
   public Hex[]  hexes;
-  public Tile[] tiles;
 
   private int radius;
+  private int size;
 
-  public Maze(int _radius) {
-    // TODO: if radius < 1, stop
-    radius = _radius;
+  public Maze(int radius) {
     if (radius < 0) { Debug.Break(); }
+    this.radius = radius;
 
-    int hex_count = 1;
-    for (int i = 1; i < radius; i ++) { hex_count += 6 * i; }
-
-    hexes = new Hex[hex_count];
-    tiles = new Tile[hex_count * 6];
+    size = 2 * radius + 1;
+    hexes = new Hex[size * size];
   }
 
   public void SpawnHexes() {
-    for (int x = -radius; x <= radius; ++x) {
-      for (int y = -radius; y <= radius; ++y) {
-        for (int z = -radius; z <= radius; ++z) {
-          SpawnHex(x,y,z);
-        }
+    for (int r = 0; r < size; ++r) {
+      for (int q = 0; q < size; ++q) {
+        if (Mathf.Abs(q + r - 2 * radius) > radius) { continue; }
+        hexes[r * size + q] = new Hex(r, q);
       }
     }
   }
 
-  public void SpawnHex(int x, int y, int z) {
-    Debug.LogFormat("x: {0} y: {1} z: {2}", x, y, z);
+  public Hex get(int q, int r) {
+    if (Mathf.Abs(q + r - 2 * radius) > radius) { return null; }
+    return hexes[r * size + q];
+  }
+
+  public void Dbg() {
+    string str = "";
+    for (int r = 0; r < size; ++r) {
+      for (int q = 0; q < size; ++q) {
+        // TODO: display hex type
+        str += hexes[r * size + q] == null ? "0" : "1";
+      }
+      str += "\n";
+    }
+    Debug.Log(str);
   }
 }
 
