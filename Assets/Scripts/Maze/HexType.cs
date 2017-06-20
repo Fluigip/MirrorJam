@@ -5,7 +5,7 @@ public enum HexType
 {
   Start,
   Empty,
-  Finish
+  Goal
 }
 
 }

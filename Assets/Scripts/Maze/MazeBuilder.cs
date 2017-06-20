@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using MirrorJam;
 
@@ -8,23 +9,28 @@ public class MazeBuilder : MonoBehaviour
   public int radius = 1;
   public int loops = 3;
 
+  private Maze maze;
+  private Hex start;
+  private Hex goal;
+
   public void Start ()
   {
-    GameObject go = new GameObject("Maze");
-    Maze maze = new Maze(radius);
-
     if (seed > 0) { Random.InitState(seed); }
+    maze = new Maze(radius);
 
-    SpawnHexes(maze);
-    BuildMesh(maze);
-    PickStart(maze);
-    Backtrack(maze);
-    // AddLoops(maze);
-    // PickFinish(maze);
-    DebugMaze(maze);
+    SpawnHexes();
+    CreateMesh();
+    SetStart();
+    Backtrack();
+    // AddLoops();
+    // SetGoal();
+    DebugMaze();
+
+    // TODO: instantiate it
+    // GameObject go = new GameObject("Maze");
 	}
 
-  private void SpawnHexes(Maze maze) {
+  private void SpawnHexes() {
     for (int r = 0; r < maze.size; ++r) {
       for (int q = 0; q < maze.size; ++q) {
         if (Mathf.Abs(q + r - 2 * maze.radius) > maze.radius) { continue; }
@@ -33,30 +39,29 @@ public class MazeBuilder : MonoBehaviour
     }
   }
 
-  private void BuildMesh(Maze maze) {
+  private void CreateMesh() {
     for (int r = 0; r < maze.size; ++r) {
       for (int q = 0; q < maze.size; ++q) {
         Hex hex = maze.get(q, r);
         if(hex == null) { continue; }
 
-        ConnectNeighs(maze, hex, q + 1, r, 0);
-        ConnectNeighs(maze, hex, q + 1, r - 1, 1);
-        ConnectNeighs(maze, hex, q, r - 1, 2);
-        ConnectNeighs(maze, hex, q - 1, r, 3);
-        ConnectNeighs(maze, hex, q - 1, r + 1, 4);
-        ConnectNeighs(maze, hex, q, r + 1, 5);
+        ConnectNeighs(hex, q + 1, r, 0);
+        ConnectNeighs(hex, q + 1, r - 1, 1);
+        ConnectNeighs(hex, q, r - 1, 2);
+        ConnectNeighs(hex, q - 1, r, 3);
+        ConnectNeighs(hex, q - 1, r + 1, 4);
+        ConnectNeighs(hex, q, r + 1, 5);
       }
     }
   }
 
-  private void ConnectNeighs(Maze maze, Hex hex, int q, int r, int idx) {
+  private void ConnectNeighs(Hex hex, int q, int r, int idx) {
     Hex aux = maze.get(q, r);
-    if( aux != null) {
-      hex.neighs[idx] = aux;
-    }
+    if( aux == null) { return; }
+    hex.neighs[idx] = aux;
   }
 
-  private void PickStart(Maze maze) {
+  private void SetStart() {
     int q, r;
     do {
       q = Random.Range(0, maze.size);
@@ -64,13 +69,31 @@ public class MazeBuilder : MonoBehaviour
     } while (!maze.contains(q, r));
     Hex hex = maze.get(q, r);
     hex.type = HexType.Start;
+    start = hex;
   }
 
-  private void Backtrack(int seed) {
+  private void Backtrack() {
+    List<Hex> extended = new List<Hex>();
+    Queue<Hex> queue = new Queue<Hex>();
+    queue.
+
     // TODO: GENERATE MAZE
   }
 
-  public void DebugMaze(Maze maze) {
+  private void SetGoal() {
+    Hex target = start;
+    for (int r = 0; r < maze.size; ++r) {
+      for (int q = 0; q < maze.size; ++q) {
+        Hex hex = maze.hexes[r * maze.size + q];
+        if(hex == null || hex.d <= target.d) { continue; }
+        target = hex;
+      }
+    }
+    target.type = HexType.Goal;
+    goal = target;
+  }
+
+  public void DebugMaze() {
     string str = "";
     for (int r = 0; r < maze.size; ++r) {
       for (int q = 0; q < maze.size; ++q) {
@@ -87,7 +110,7 @@ public class MazeBuilder : MonoBehaviour
 
         switch(hex.type) {
           case HexType.Start:  str += "S"; break;
-          case HexType.Finish: str += "F"; break;
+          case HexType.Goal: str += "G"; break;
           default: str += " "; break;
         }
 
