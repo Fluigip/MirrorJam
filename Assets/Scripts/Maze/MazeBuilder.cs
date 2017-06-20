@@ -18,7 +18,7 @@ public class MazeBuilder : MonoBehaviour
     SpawnHexes(maze);
     BuildMesh(maze);
     PickStart(maze);
-    // Backtrack(maze);
+    Backtrack(maze);
     // AddLoops(maze);
     // PickFinish(maze);
     DebugMaze(maze);
@@ -66,7 +66,7 @@ public class MazeBuilder : MonoBehaviour
     hex.type = HexType.Start;
   }
 
-  private void Generate(int seed) {
+  private void Backtrack(int seed) {
     // TODO: GENERATE MAZE
   }
 
