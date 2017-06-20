@@ -23,7 +23,7 @@ public class MazeBuilder : MonoBehaviour
     SetStart();
     Backtrack();
     // AddLoops();
-    // SetGoal();
+    SetGoal();
     DebugMaze();
 
     // TODO: instantiate it
@@ -34,7 +34,7 @@ public class MazeBuilder : MonoBehaviour
     for (int r = 0; r < maze.size; ++r) {
       for (int q = 0; q < maze.size; ++q) {
         if (Mathf.Abs(q + r - 2 * maze.radius) > maze.radius) { continue; }
-        maze.set(q, r, new Hex(q, r));
+        maze.Set(q, r, new Hex(q, r));
       }
     }
   }
@@ -42,21 +42,21 @@ public class MazeBuilder : MonoBehaviour
   private void CreateMesh() {
     for (int r = 0; r < maze.size; ++r) {
       for (int q = 0; q < maze.size; ++q) {
-        Hex hex = maze.get(q, r);
+        Hex hex = maze.Get(q, r);
         if(hex == null) { continue; }
 
-        ConnectNeighs(hex, q + 1, r, 0);
-        ConnectNeighs(hex, q + 1, r - 1, 1);
-        ConnectNeighs(hex, q, r - 1, 2);
-        ConnectNeighs(hex, q - 1, r, 3);
-        ConnectNeighs(hex, q - 1, r + 1, 4);
-        ConnectNeighs(hex, q, r + 1, 5);
+        ConnectNeigh(hex, q + 1, r, 0);
+        ConnectNeigh(hex, q + 1, r - 1, 1);
+        ConnectNeigh(hex, q, r - 1, 2);
+        ConnectNeigh(hex, q - 1, r, 3);
+        ConnectNeigh(hex, q - 1, r + 1, 4);
+        ConnectNeigh(hex, q, r + 1, 5);
       }
     }
   }
 
-  private void ConnectNeighs(Hex hex, int q, int r, int idx) {
-    Hex aux = maze.get(q, r);
+  private void ConnectNeigh(Hex hex, int q, int r, int idx) {
+    Hex aux = maze.Get(q, r);
     if( aux == null) { return; }
     hex.neighs[idx] = aux;
   }
@@ -66,18 +66,36 @@ public class MazeBuilder : MonoBehaviour
     do {
       q = Random.Range(0, maze.size);
       r = Random.Range(0, maze.size);
-    } while (!maze.contains(q, r));
-    Hex hex = maze.get(q, r);
+    } while (!maze.Contains(q, r));
+    Hex hex = maze.Get(q, r);
     hex.type = HexType.Start;
     start = hex;
   }
 
   private void Backtrack() {
     List<Hex> extended = new List<Hex>();
-    Queue<Hex> queue = new Queue<Hex>();
-    queue.
+    Stack<Hex> stack = new Stack<Hex>();
 
-    // TODO: GENERATE MAZE
+    stack.Push(start);
+    while(stack.Count > 0) {
+      DebugMaze();
+
+      Hex hex = stack.Pop();
+      if (extended.Contains(hex)) { continue; }
+      extended.Add(hex);
+
+      int offset = Random.Range(0, 6);
+      for (int i = 0; i < 6; ++i) {
+        Hex neigh = hex.neighs[(i + offset) % 6];
+        if (neigh == null || extended.Contains(neigh)) { continue; }
+        neigh.d = hex.d + 1;
+        hex.code += 1 << i;
+        neigh.code += 1 << ((i + 3)  % 6);
+        stack.Push(neigh);
+      }
+    }
+
+    DebugMaze();
   }
 
   private void SetGoal() {
@@ -100,13 +118,13 @@ public class MazeBuilder : MonoBehaviour
         Hex hex = maze.hexes[r * maze.size + q];
         if(hex == null) { str += " 00"; continue; }
 
-        int code = 0;
-        if(hex.neighs[0] != null) { code += 1; }
-        if(hex.neighs[1] != null) { code += 2; }
-        if(hex.neighs[2] != null) { code += 4; }
-        if(hex.neighs[3] != null) { code += 8; }
-        if(hex.neighs[4] != null) { code += 16; }
-        if(hex.neighs[5] != null) { code += 32; }
+        // int code = 0;
+        // if(hex.neighs[0] != null) { code += 1; }
+        // if(hex.neighs[1] != null) { code += 2; }
+        // if(hex.neighs[2] != null) { code += 4; }
+        // if(hex.neighs[3] != null) { code += 8; }
+        // if(hex.neighs[4] != null) { code += 16; }
+        // if(hex.neighs[5] != null) { code += 32; }
 
         switch(hex.type) {
           case HexType.Start:  str += "S"; break;
@@ -114,7 +132,7 @@ public class MazeBuilder : MonoBehaviour
           default: str += " "; break;
         }
 
-        str += code.ToString("00");
+        str += hex.code.ToString("00");
       }
       str += "\n\n";
     }

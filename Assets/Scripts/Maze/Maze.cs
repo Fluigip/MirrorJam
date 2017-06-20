@@ -18,19 +18,19 @@ public class Maze
     hexes = new Hex[size * size];
   }
 
-  public bool contains(int q, int r) {
+  public bool Contains(int q, int r) {
     if (q < 0 || q >= size || r < 0 || r >= size) { return false; }
     if (Mathf.Abs(q + r - 2 * radius) > radius) { return false; }
     return true;
   }
 
-  public Hex get(int q, int r) {
-    if (!contains(q,r)) { return null; }
+  public Hex Get(int q, int r) {
+    if (!Contains(q,r)) { return null; }
     return hexes[r * size + q];
   }
 
-  public bool set(int q, int r, Hex hex) {
-    if (!contains(q,r)) { return false; }
+  public bool Set(int q, int r, Hex hex) {
+    if (!Contains(q,r)) { return false; }
     hexes[r * size + q] = hex;
     return true;
   }
