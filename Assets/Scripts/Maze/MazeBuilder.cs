@@ -74,26 +74,28 @@ public class MazeBuilder : MonoBehaviour
 
   private void Backtrack() {
     List<Hex> extended = new List<Hex>();
-    Stack<Hex> stack = new Stack<Hex>();
+    Stack<Vector> stack = new Stack<Vector>();
 
-    stack.Push(start);
+    stack.Push(new Vector(null, start, 0));
     while(stack.Count > 0) {
+      Vector v = stack.Pop();
+      if (extended.Contains(v.dst)) { continue; }
+      extended.Add(v.dst);
+
       DebugMaze();
 
-      Hex hex = stack.Pop();
-      if (extended.Contains(hex)) { continue; }
-      extended.Add(hex);
+      v.dst.code += 1 << ((v.direction + 3)  % 6);
+      if(v.src != null) {
+        v.dst.distance = v.src.distance + 1;
+        v.src.code += 1 << v.direction;
+      }
 
       int offset = Random.Range(0, 6);
       for (int i = 0; i < 6; ++i) {
         int idx = (i + offset) % 6;
-        Hex neigh = hex.neighs[idx];
+        Hex neigh = v.dst.neighs[idx];
         if (neigh == null || extended.Contains(neigh)) { continue; }
-        neigh.d = hex.d + 1;
-        hex.code += 1 << idx;
-        neigh.code += 1 << ((idx + 3)  % 6);
-        stack.Push(neigh);
-        break;
+        stack.Push(new Vector(v.dst, neigh, idx));
       }
     }
 
@@ -105,7 +107,7 @@ public class MazeBuilder : MonoBehaviour
     for (int r = 0; r < maze.size; ++r) {
       for (int q = 0; q < maze.size; ++q) {
         Hex hex = maze.hexes[r * maze.size + q];
-        if(hex == null || hex.d <= target.d) { continue; }
+        if(hex == null || hex.distance <= target.distance) { continue; }
         target = hex;
       }
     }
