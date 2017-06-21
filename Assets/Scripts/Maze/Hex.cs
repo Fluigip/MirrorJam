@@ -9,6 +9,7 @@ public class Hex
   public int     r;
   public int     distance;
   public int     code;
+  public int     vectors;
   public HexType type;
   public Hex[]   neighs;
 

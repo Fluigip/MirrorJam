@@ -22,7 +22,7 @@ public class MazeBuilder : MonoBehaviour
     CreateMesh();
     SetStart();
     Backtrack();
-    // AddLoops();
+    AddLoops();
     SetGoal();
     DebugMaze();
 
@@ -88,6 +88,8 @@ public class MazeBuilder : MonoBehaviour
         v.dst.distance = v.src.distance + 1;
         v.src.code += 1 << v.direction;
         v.dst.code += 1 << ((v.direction + 3)  % 6);
+        v.src.vectors++;
+        v.dst.vectors++;
       }
 
       int offset = Random.Range(0, 6);
@@ -98,6 +100,10 @@ public class MazeBuilder : MonoBehaviour
         stack.Push(new Vector(v.dst, neigh, idx));
       }
     }
+  }
+
+  private void AddLoops() {
+    // TODO: check if we need to add loops actually
   }
 
   private void SetGoal() {
@@ -118,20 +124,12 @@ public class MazeBuilder : MonoBehaviour
     for (int r = 0; r < maze.size; ++r) {
       for (int q = 0; q < maze.size; ++q) {
         Hex hex = maze.hexes[r * maze.size + q];
-        if(hex == null) { str += " 00"; continue; }
-
-        // int code = 0;
-        // if(hex.neighs[0] != null) { code += 1; }
-        // if(hex.neighs[1] != null) { code += 2; }
-        // if(hex.neighs[2] != null) { code += 4; }
-        // if(hex.neighs[3] != null) { code += 8; }
-        // if(hex.neighs[4] != null) { code += 16; }
-        // if(hex.neighs[5] != null) { code += 32; }
+        if(hex == null) { str += "  00"; continue; }
 
         switch(hex.type) {
-          case HexType.Start:  str += "S"; break;
-          case HexType.Goal: str += "G"; break;
-          default: str += " "; break;
+          case HexType.Start: str += " ."; break;
+          case HexType.Goal:  str += " ;"; break;
+          default: str += "  "; break;
         }
 
         str += hex.code.ToString("00");

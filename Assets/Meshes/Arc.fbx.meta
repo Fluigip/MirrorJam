@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 7c641c13f9a35464ea82aa21b2dc6eb0
-timeCreated: 1497975569
+guid: b765d156659284536b0f53c16233ba84
+timeCreated: 1498014431
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -36,7 +36,7 @@ ModelImporter:
   meshes:
     lODScreenPercentages: []
     globalScale: 1
-    meshCompression: 3
+    meshCompression: 0
     addColliders: 0
     importBlendShapes: 0
     swapUVChannels: 0
@@ -53,7 +53,7 @@ ModelImporter:
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
-    tangentImportMode: 0
+    tangentImportMode: 3
   importAnimation: 0
   copyAvatar: 0
   humanDescription:
