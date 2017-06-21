@@ -86,12 +86,14 @@ public class MazeBuilder : MonoBehaviour
 
       int offset = Random.Range(0, 6);
       for (int i = 0; i < 6; ++i) {
-        Hex neigh = hex.neighs[(i + offset) % 6];
+        int idx = (i + offset) % 6;
+        Hex neigh = hex.neighs[idx];
         if (neigh == null || extended.Contains(neigh)) { continue; }
         neigh.d = hex.d + 1;
-        hex.code += 1 << i;
-        neigh.code += 1 << ((i + 3)  % 6);
+        hex.code += 1 << idx;
+        neigh.code += 1 << ((idx + 3)  % 6);
         stack.Push(neigh);
+        break;
       }
     }
 
