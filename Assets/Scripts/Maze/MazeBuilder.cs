@@ -82,12 +82,12 @@ public class MazeBuilder : MonoBehaviour
       if (extended.Contains(v.dst)) { continue; }
       extended.Add(v.dst);
 
+      // TODO: remove this
       DebugMaze();
-
-      v.dst.code += 1 << ((v.direction + 3)  % 6);
       if(v.src != null) {
         v.dst.distance = v.src.distance + 1;
         v.src.code += 1 << v.direction;
+        v.dst.code += 1 << ((v.direction + 3)  % 6);
       }
 
       int offset = Random.Range(0, 6);
@@ -98,8 +98,6 @@ public class MazeBuilder : MonoBehaviour
         stack.Push(new Vector(v.dst, neigh, idx));
       }
     }
-
-    DebugMaze();
   }
 
   private void SetGoal() {
