@@ -82,8 +82,6 @@ public class MazeBuilder : MonoBehaviour
       if (extended.Contains(v.dst)) { continue; }
       extended.Add(v.dst);
 
-      // TODO: remove this
-      DebugMaze();
       if(v.src != null) {
         v.dst.distance = v.src.distance + 1;
         v.src.code += 1 << v.direction;
